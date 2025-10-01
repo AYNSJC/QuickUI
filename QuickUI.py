@@ -23,9 +23,9 @@ def create_label(info: str="Message", x: int=0, y: int=0):
 
 
 # Creates a button at a set positions
-def create_button(info: str="Button", x: int=0, y: int=0):
+def create_button(info: str="Button", x: int=0, y: int=0, command=None):
     if frame:
-        ttk.Button(frame, text=info).grid(column=x, row=y)
+        ttk.Button(frame, text=info, command=command).grid(column=x, row=y)
     else:
         raise RuntimeError("Frame not initialized. Call create_window first.")
 
@@ -51,7 +51,7 @@ def create_checkbox(info="Check", x=0, y=0):
         raise RuntimeError("Frame not initialized. Call create_window first.")
 
 
-# Creates a dialouge box with title and message
+# Creates a dialog box with title and message
 def show_message(title="QuickUI", message="QuickUI pop-up"):
     messagebox.showinfo(title, message)
 
