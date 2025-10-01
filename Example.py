@@ -1,9 +1,6 @@
 import QuickUI
 
-agreed = None
-
 def check_age(age: int) -> str:
-    global agreed
     if not agreed.get():
         return "Agree to T&C"
 
@@ -11,7 +8,6 @@ def check_age(age: int) -> str:
         return "Can drive"
     else:
         return "Can't drive"
-
 
 QuickUI.create_window(user_padding=10, title="QuickUI - drive test")
 QuickUI.create_label(info="Can you drive?", y=0)
