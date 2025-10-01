@@ -1,4 +1,4 @@
-import tkinter as tK
+import tkinter as tk
 from tkinter import ttk, messagebox
 
 root = None
@@ -7,7 +7,7 @@ frame = None
 # Create a window screen with padding, title and dimensions
 def create_window(user_padding: int=5, title: str="QuickUI title", dimensions: tuple[int, int]=(720, 640)):
     global root, frame
-    root = tK.Tk()
+    root = tk.Tk()
     frame = ttk.Frame(root, padding=user_padding)
     frame.grid()
     root.title(title)
@@ -44,7 +44,7 @@ def create_entry(x=0, y=0, default=""):
 # Creates a checkbox with info and positions
 def create_checkbox(info="Check", x=0, y=0):
     if frame:
-        var = tK.BooleanVar()
+        var = tk.BooleanVar()
         ttk.Checkbutton(frame, text=info, variable=var).grid(column=x, row=y)
         return var
     else:
