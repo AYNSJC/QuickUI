@@ -1,8 +1,8 @@
 import QuickUI
 
-information:str = "Hello World!"
-
-QuickUI.create_window(20, "Cool Program", [720, 640])
-QuickUI.create_label(information, 0, 0)
-QuickUI.create_button("Button", 1, 0)
+QuickUI.create_window()
+QuickUI.create_label("QuickUI's Important question:", y=0, x=0)
+entry = QuickUI.create_entry(y=0, x=1)
+QuickUI.create_checkbox("True?", y=1, x=0)
+QuickUI.create_button("Cool!", y=2, x=0)
 QuickUI.refresh_ui()
