@@ -30,7 +30,7 @@ def create_button(info: str="Button", x: int=0, y: int=0, command=None):
         raise RuntimeError("Frame not initialized. Call create_window first.")
 
 
-# Creates a entry with a set message and at positions
+# Creates an entry with a set message and at positions
 def create_entry(x=0, y=0, default=""):
     if frame:
         entry = ttk.Entry(frame)
