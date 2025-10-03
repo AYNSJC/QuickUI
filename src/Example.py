@@ -6,8 +6,10 @@ def check_age(age: int) -> str:
         return "Agree to T&C"
 
     if age >= 18:
+        QuickUI.create_label(info="Can drive", y=4)
         return "Can drive"
     else:
+        QuickUI.create_label(info="Can't drive", y=4)
         return "Can't drive"
 
 # Creates window
