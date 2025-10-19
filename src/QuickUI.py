@@ -4,21 +4,26 @@ from typing import Callable, Optional, Any
 
 root = None
 frame = None
+widget_registry = []
 
 # Create a window screen with padding, title and dimensions
 def create_window(user_padding: int=5, title: str="QuickUI title", dimensions: tuple[int, int]=(720, 640)):
-    global root, frame
+    global root, frame, widget_registry
     root = tk.Tk()
     frame = ttk.Frame(root, padding=user_padding)
     frame.grid()
     root.title(title)
     root.geometry(f"{dimensions[0]}x{dimensions[1]}")
+    widget_registry = []
 
 
 # Creates a label with a set message and at a set positions
 def create_label(info: str="Message", x: int=0, y: int=0, font: Optional[tuple]=None):
     if frame:
-        ttk.Label(frame, text=info, font=font).grid(column=x, row=y)
+        label = ttk.Label(frame, text=info, font=font)
+        label.grid(column=x, row=y)
+        widget_registry.append(label)
+        return label
     else:
         raise RuntimeError("Frame not initialized. Call create_window first.")
 
@@ -26,7 +31,10 @@ def create_label(info: str="Message", x: int=0, y: int=0, font: Optional[tuple]=
 # Creates a button at a set positions
 def create_button(info: str="Button", x: int=0, y: int=0, command=None):
     if frame:
-        ttk.Button(frame, text=info, command=command).grid(column=x, row=y)
+        button = ttk.Button(frame, text=info, command=command)
+        button.grid(column=x, row=y)
+        widget_registry.append(button)
+        return button
     else:
         raise RuntimeError("Frame not initialized. Call create_window first.")
 
@@ -37,6 +45,7 @@ def create_entry(x=0, y=0, default=""):
         entry = ttk.Entry(frame)
         entry.insert(0, default)
         entry.grid(column=x, row=y)
+        widget_registry.append(entry)
         return entry
     else:
         raise RuntimeError("Frame not initialized. Call create_window first.")
@@ -46,7 +55,9 @@ def create_entry(x=0, y=0, default=""):
 def create_checkbox(info="Check", x=0, y=0):
     if frame:
         var = tk.BooleanVar()
-        ttk.Checkbutton(frame, text=info, variable=var).grid(column=x, row=y)
+        checkbox = ttk.Checkbutton(frame, text=info, variable=var)
+        checkbox.grid(column=x, row=y)
+        widget_registry.append(checkbox)
         return var
     else:
         raise RuntimeError("Frame not initialized. Call create_window first.")
@@ -58,6 +69,7 @@ def create_dropdown(options: list[str], x: int=0, y: int=0, default: int=0):
         var = tk.StringVar(value=options[default] if options else "")
         dropdown = ttk.Combobox(frame, textvariable=var, values=options, state="readonly")
         dropdown.grid(column=x, row=y)
+        widget_registry.append(dropdown)
         return var
     else:
         raise RuntimeError("Frame not initialized. Call create_window first.")
@@ -69,6 +81,7 @@ def create_spinbox(x: int=0, y: int=0, from_: int=0, to: int=100, default: int=0
         var = tk.IntVar(value=default)
         spinbox = ttk.Spinbox(frame, from_=from_, to=to, textvariable=var)
         spinbox.grid(column=x, row=y)
+        widget_registry.append(spinbox)
         return var
     else:
         raise RuntimeError("Frame not initialized. Call create_window first.")
@@ -79,6 +92,7 @@ def create_text(x: int=0, y: int=0, width: int=30, height: int=5):
     if frame:
         text = tk.Text(frame, width=width, height=height)
         text.grid(column=x, row=y)
+        widget_registry.append(text)
         return text
     else:
         raise RuntimeError("Frame not initialized. Call create_window first.")
@@ -91,6 +105,7 @@ def create_listbox(items: list[str], x: int=0, y: int=0, height: int=5):
         for item in items:
             listbox.insert(tk.END, item)
         listbox.grid(column=x, row=y)
+        widget_registry.append(listbox)
         return listbox
     else:
         raise RuntimeError("Frame not initialized. Call create_window first.")
@@ -102,6 +117,7 @@ def create_progressbar(x: int=0, y: int=0, width: int=200, max_value: int=100):
         var = tk.DoubleVar()
         pbar = ttk.Progressbar(frame, variable=var, maximum=max_value, length=width)
         pbar.grid(column=x, row=y)
+        widget_registry.append(pbar)
         return var
     else:
         raise RuntimeError("Frame not initialized. Call create_window first.")
@@ -113,6 +129,7 @@ def create_slider(x: int=0, y: int=0, from_: int=0, to: int=100, orient: str="ho
         var = tk.IntVar()
         slider = ttk.Scale(frame, from_=from_, to=to, variable=var, orient=orient)
         slider.grid(column=x, row=y)
+        widget_registry.append(slider)
         return var
     else:
         raise RuntimeError("Frame not initialized. Call create_window first.")
@@ -123,6 +140,7 @@ def create_separator(x: int=0, y: int=0, orient: str="horizontal"):
     if frame:
         sep = ttk.Separator(frame, orient=orient)
         sep.grid(column=x, row=y, sticky="ew")
+        widget_registry.append(sep)
     else:
         raise RuntimeError("Frame not initialized. Call create_window first.")
 
@@ -132,6 +150,7 @@ def create_frame(x: int=0, y: int=0, padding: int=5):
     if frame:
         sub_frame = ttk.Frame(frame, padding=padding)
         sub_frame.grid(column=x, row=y)
+        widget_registry.append(sub_frame)
         return sub_frame
     else:
         raise RuntimeError("Frame not initialized. Call create_window first.")
@@ -169,6 +188,30 @@ def show_folder_dialog(title="Select Folder"):
 def show_color_picker(title="Pick a Color"):
     color = colorchooser.askcolor(title=title)
     return color[1] if color[0] else None
+
+
+# Remove UI widgets
+def remove_widget(widget):
+    """Remove a specific widget from the UI"""
+    if widget in widget_registry:
+        widget.grid_remove()
+        widget_registry.remove(widget)
+
+
+def remove_all_widgets():
+    """Remove all widgets from the frame"""
+    for widget in widget_registry:
+        widget.grid_remove()
+    widget_registry.clear()
+
+
+def clear_frame():
+    """Clear all widgets and reset the frame"""
+    global frame
+    if frame:
+        for widget in widget_registry:
+            widget.destroy()
+        widget_registry.clear()
 
 
 # Refreshes UI
